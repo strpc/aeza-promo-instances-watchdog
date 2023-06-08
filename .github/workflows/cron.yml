@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Run
+        run: |
+          export IP_ADDRESSES=${{ secrets.IP_ADDRESSES }}
+          export AEZA_API_KEY=${{ secrets.AEZA_API_KEY }}
+          export AEZA_API_BASE_URL=${{ secrets.AEZA_API_BASE_URL }}
+          export AEZA_VM_BASE_URL=${{ secrets.AEZA_VM_BASE_URL }}
+          export NTFY_CHANNEL=${{ secrets.NTFY_CHANNEL }}
+          export GITHUB_ACTION_MODE="true"
+          go run ./cmd/aeza-promo-instances-watchdog
